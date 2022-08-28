@@ -32,3 +32,14 @@ This library also provides proxy functions to other standard library error funct
 - `errors.Is` proxies to stdlib's `errors.Is`
 - `errors.As` proxies to stdlib's `errors.As`
 - `errors.Unwrap` proxies to stdlib's `errors.Unwrap`
+
+Additionally we provide the following set of functionalities that can be used to provide more context
+regarding the errors being handled;
+
+- `errors.With` which can be used to attach custom labels to the errors, those labels can later be used while handling the
+  errors for example being passed as fingerprints to Sentry while being reported.
+- `errors.Labels`, `errors.LabeledBy`, and `errors.LabeledByAny` which can be used to work with labels assigned using
+  `errors.With`.
+- `errors.DetailedError` can be used to print the error message along with any additional details such as the
+  file and line if they are known along with any wrapped errors into one neat message.
+- `errors.FileAndLine` which can be used to pull the file and line the error was defined in (if using this package's errors).

@@ -25,10 +25,12 @@ var (
 	_ interface{ Unwrap() error } = contextualError{}
 
 	// To keep in with the style of stdlib's `errors' package we define a new interface
-	// with `Wrap' and `With' methods.
+	// with `Wrap', `With', `Labels', and `LabeledBy' methods.
 	//
-	_ interface{ Wrap(...error) error }  = contextualError{}
-	_ interface{ With(...string) error } = contextualError{}
+	_ interface{ Wrap(...error) error }   = contextualError{}
+	_ interface{ With(...string) error }  = contextualError{}
+	_ interface{ Labels() []string }      = contextualError{}
+	_ interface{ LabeledBy(string) bool } = contextualError{}
 )
 
 // New generates a new Error instance, it captures the caller
@@ -58,6 +60,21 @@ func (err contextualError) Error() string {
 func (err contextualError) With(labels ...string) error {
 	err.labels = append(err.labels, labels...)
 	return err
+}
+
+// Labels returns all assigned labels to the given error
+func (err contextualError) Labels() []string {
+	return err.labels
+}
+
+// LabeledBy checks whether or not a given label is assigned to the error.
+func (err contextualError) LabeledBy(label string) bool {
+	for _, l := range err.labels {
+		if l == label {
+			return true
+		}
+	}
+	return false
 }
 
 // Wrap can be used to wrap additional errors inside out Error type.

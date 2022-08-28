@@ -48,8 +48,8 @@ func With(err error, tags ...string) error {
 // if any other error is passed it will return an empty list.
 //
 func Labels(err error) []string {
-	if err, ok := err.(contextualError); ok {
-		return err.labels
+	if err, ok := err.(interface{ Labels() []string }); ok {
+		return err.Labels()
 	}
 	return []string{}
 }
@@ -58,33 +58,21 @@ func Labels(err error) []string {
 // and if so checks if it contains the provided tag.
 //
 func LabeledBy(err error, label string) bool {
-	e, ok := err.(contextualError)
-	if !ok {
-		return false
+	if e, ok := err.(interface{ LabeledBy(string) bool }); ok {
+		return e.LabeledBy(label)
 	}
-	return hasLabel(e, label)
+	return false
 }
 
 // LabeledByAny checks if the given error is a our Error type
 // and if so checks if it contains any of the provided tags.
 //
 func LabeledByAny(err error, labels ...string) bool {
-	e, ok := err.(contextualError)
-	if !ok {
-		return false
-	}
-	for _, t := range labels {
-		if hasLabel(e, t) {
-			return true
-		}
-	}
-	return false
-}
-
-func hasLabel(err contextualError, label string) bool {
-	for _, t := range err.labels {
-		if t == label {
-			return true
+	if e, ok := err.(interface{ LabeledBy(string) bool }); ok {
+		for _, t := range labels {
+			if e.LabeledBy(t) {
+				return true
+			}
 		}
 	}
 	return false
