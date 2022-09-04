@@ -113,5 +113,5 @@ func (err contextualError) Is(target error) bool {
 	if target, ok := target.(contextualError); ok {
 		return equivalent(err, target) || Is(err.wrapped, target)
 	}
-	return false
+	return Is(err.wrapped, target)
 }
