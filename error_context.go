@@ -15,7 +15,7 @@ func DetailedError(err error) string {
 	}
 	msg.WriteString(err.Error())
 	for werr := Unwrap(err); werr != nil; werr = Unwrap(werr) {
-		msg.WriteString(fmt.Sprintf("\nCaused by: %s\n", err.Error()))
+		msg.WriteString(fmt.Sprintf("\nCaused by: %s\n", werr.Error()))
 	}
 	return msg.String()
 }
